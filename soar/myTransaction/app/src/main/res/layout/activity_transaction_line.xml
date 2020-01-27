@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
+    android:id="@+id/drawer_transactionline_layout"
+    android:theme="@style/AppTheme.NoActionBar"
+    tools:context=".Transaction_line"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="2dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:id="@+id/for_back">
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_back1"
+                    android:id="@+id/back"
+                    />
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/temp_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".30"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:id="@+id/for_import">
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/spin_temp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_done5"
+                    android:id="@+id/done"/>
+            </LinearLayout>
+
+            <SearchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:defaultFocusHighlightEnabled="true"
+                android:layout_toEndOf="@+id/back"
+                android:id="@+id/search"
+                android:layout_weight=".15"
+                android:visibility="gone"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:background="#1483C2">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="GROSS SALES: "
+                android:textColor="#EEEDEF"
+                android:paddingEnd="10dp"
+                android:gravity="right|center_vertical"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="0.00"
+                android:textColor="#EEEDEF"
+                android:paddingStart="20dp"
+                android:gravity="left|center_vertical"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:id="@+id/gross_id"
+                />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight=".75"
+            android:text="PRODUCT"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:background="#266FA7"
+            android:textStyle="bold"
+            android:textColor="#ffffff"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_weight=".9"
+            android:background="#36698A"
+            android:gravity="center"
+            android:text="UOM"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#2C5D79"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="PRC"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#1A5575"
+            android:gravity="center"
+            android:text="QTY"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#073857"
+            android:gravity="center"
+            android:text="STL"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+    </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/contlistview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></ListView>
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:foregroundGravity="center"
+                android:background="@mipmap/ic_search1"
+                android:id="@+id/search_btn"/>
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/activity_navigate_drawer" />
+
+
+
+
+</android.support.v4.widget.DrawerLayout>

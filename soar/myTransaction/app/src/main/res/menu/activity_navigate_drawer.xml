@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view"
+
+    android:theme="@style/AppTheme.NoActionBar"
+
+    >
+    <item android:title="Admin">
+
+    <menu android:checkableBehavior="single"
+
+        >
+        <item
+            android:id="@+id/nav_employee"
+            android:icon="@drawable/ic_employee"
+            android:title="Employee" />
+        <item
+            android:id="@+id/nav_product"
+            android:icon="@drawable/ic_product"
+            android:title="Product" />
+        <item
+            android:id="@+id/nav_branch"
+            android:icon="@drawable/ic_branch"
+            android:title="Branch" />
+
+        <item
+            android:id="@+id/nav_template"
+            android:icon="@drawable/ic_template"
+            android:title="Template" />
+
+
+
+        <item
+            android:id="@+id/nav_change_pass"
+            android:icon="@drawable/ic_amin_pass"
+            android:title="Admin Password" />
+
+        <item
+            android:id="@+id/nav_purge"
+            android:icon="@drawable/ic_clear"
+            android:title="Purge" />
+
+
+
+    </menu>
+    </item>
+
+    <item android:title="User">
+        <menu>
+            <item
+                android:id="@+id/nav_transaction"
+                android:icon="@drawable/ic_transaction"
+                android:title="Transaction" />
+            <item
+                android:id="@+id/nav_request"
+                android:icon="@drawable/ic_transaction"
+                android:title="Job Order" />
+
+            <item
+                android:id="@+id/nav_deliver"
+                android:icon="@drawable/ic_template"
+                android:title="Delivery Report" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_send"
+                android:title="Send Transaction" />
+            <item
+                android:id="@+id/nav_created"
+                android:icon="@drawable/ic_view"
+                android:title="View Transactions" />
+
+
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_about"
+                android:title="About Us"
+                />
+        </menu>
+    </item>
+
+    <item android:title="Exits">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Log-out"/>
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/ic_exit"
+                android:title="Close App" />
+        </menu>
+    </item>
+
+</menu>

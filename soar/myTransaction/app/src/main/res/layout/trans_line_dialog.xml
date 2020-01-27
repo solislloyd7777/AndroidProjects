@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/prod1"
+        android:padding="5dp"
+        android:layout_weight=".75"
+        android:textColor="#000000"
+        android:background="#98D5EE"
+        android:gravity="center_vertical"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/uom1"
+        android:layout_weight=".9"
+        android:textColor="#000000"
+        android:background="#71D0F5"
+        android:padding="5dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/price1"
+        android:textColor="#000000"
+        android:background="#4BC4F3"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/qty1"
+        android:textColor="#000000"
+        android:padding="5dp"
+        android:background="#27B7F3"
+        android:layout_weight="1"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/subtotal"
+        android:textColor="#000000"
+        android:background="#0BA9F1"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:gravity="center"/>
+
+
+</LinearLayout>

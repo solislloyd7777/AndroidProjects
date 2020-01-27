@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textColor="#eeedef"
+        android:text="Choose Admin"
+        android:textStyle="bold"
+        android:background="#1483C2"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/admin1"
+            android:text="Super Admin"
+            android:background="@drawable/button_round"
+            android:textColor="#eeedef"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/admin2"
+            android:text="Admin"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_round"
+            android:textColor="#eeedef"/>
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

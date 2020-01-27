@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mh.mytransaction">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/soar_icon"
+        android:label="SOARplus"
+        android:roundIcon="@drawable/soar_icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Request"></activity>
+        <activity android:name=".Show_variance" />
+        <activity android:name=".Variance" />
+        <activity android:name=".Created_transactions" />
+        <activity android:name=".View_transactions" />
+        <activity android:name=".Delivery_report" />
+        <activity android:name=".View_report" />
+        <activity android:name=".Home" />
+        <activity
+            android:name=".compile_transaction"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Branch"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Add_employee"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Emp_template_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Transaction_line"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Edit_template"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DeviceListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Print"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Template_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".List_product"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+    </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+</manifest>
