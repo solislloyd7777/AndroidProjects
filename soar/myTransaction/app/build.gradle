@@ -7,9 +7,11 @@ android {
         applicationId "com.mh.mytransaction"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 2
-        versionName '2.0'
+        versionCode 3
+        versionName '2.3'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -17,6 +19,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+    }
+
+
+}
+repositories {
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -30,4 +45,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.nbsp:library:1.8'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

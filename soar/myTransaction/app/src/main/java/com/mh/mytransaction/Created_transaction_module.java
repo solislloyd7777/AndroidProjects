@@ -6,9 +6,9 @@ public class Created_transaction_module implements Serializable {
 
     String name,doc_num,branch_name,file_name,ref_num,remarks,locator,product,uom,isnegative,iscomputed,created_by,date_req,date_ref;
     double price,subtotal;
-    int qty;
+    double qty;
 
-    public Created_transaction_module(String name, String doc_num, String branch_name, String file_name, String ref_num, String remarks, String locator, String product, String uom, int qty, double price, double subtotal, String isnegative, String iscomputed, String date_req, String date_ref, String created_by) {
+    public Created_transaction_module(String name, String doc_num, String branch_name, String file_name, String ref_num, String remarks, String locator, String product, String uom, double qty, double price, double subtotal, String isnegative, String iscomputed, String date_req, String date_ref, String created_by) {
         this.name = name;
         this.doc_num = doc_num;
         this.branch_name = branch_name;
@@ -156,11 +156,11 @@ public class Created_transaction_module implements Serializable {
         this.subtotal = subtotal;
     }
 
-    public int getQty() {
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(double qty) {
         this.qty = qty;
     }
 

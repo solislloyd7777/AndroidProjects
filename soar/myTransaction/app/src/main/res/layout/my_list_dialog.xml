@@ -4,14 +4,16 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layout_weight="4">
+
     <TextView
+        android:id="@+id/prod"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/prod"
         android:layout_weight=".75"
-        android:textColor="#000000"
+        android:background="#00FFFFFF"
         android:gravity="center_vertical"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:textColor="#000000" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

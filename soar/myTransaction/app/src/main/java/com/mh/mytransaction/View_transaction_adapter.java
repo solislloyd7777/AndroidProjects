@@ -26,7 +26,7 @@ public class View_transaction_adapter extends ArrayAdapter<Created_transaction_m
             String product=getItem(position).getProduct();
             String uom=getItem(position).getUom();
             double price=getItem(position).getPrice();
-            int qty=getItem(position).getQty();
+            double qty=getItem(position).getQty();
             double subtotal=getItem(position).getSubtotal();
 
             //Created_transaction_module created_transaction_module=new Created_transaction_module(temp_id,product,uom_name,price,quantity,isnegative);

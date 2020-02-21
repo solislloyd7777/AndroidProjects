@@ -9,7 +9,9 @@
         android:roundIcon="@drawable/soar_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Request"></activity>
+        <activity android:name=".Performance"></activity>
+        <activity android:name=".Setting_up_template" />
+        <activity android:name=".Request" />
         <activity android:name=".Show_variance" />
         <activity android:name=".Variance" />
         <activity android:name=".Created_transactions" />

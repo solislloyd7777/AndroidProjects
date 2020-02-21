@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class Temp_content implements Serializable {
 
-    String prod,uom,isnega,isactive,iscomputed;
+    String prod,uom,isnega,isactive,iscomputed,isgrab;
     int id,fav;
     double price,qty;
 
-    public Temp_content(String prod, String uom, String isnega, String isactive, int id, double price,String iscomputed,double qty,int fav) {
+    public Temp_content(String prod, String uom, String isnega, String isactive, int id, double price,String iscomputed,double qty,int fav,String isgrab) {
         this.prod = prod;
         this.uom = uom;
         this.isnega = isnega;
@@ -18,6 +18,7 @@ public class Temp_content implements Serializable {
         this.iscomputed=iscomputed;
         this.qty=qty;
         this.fav=fav;
+        this.isgrab=isgrab;
     }
 
     public String getProd() {
@@ -95,5 +96,13 @@ public class Temp_content implements Serializable {
 
     public void setQty(double qty) {
         this.qty = qty;
+    }
+
+    public String getIsgrab() {
+        return isgrab;
+    }
+
+    public void setIsgrab(String isgrab) {
+        this.isgrab = isgrab;
     }
 }

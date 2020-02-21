@@ -1,6 +1,7 @@
 package com.mh.mytransaction;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +32,10 @@ public class My_temp_adapter extends ArrayAdapter<Temp_content> {
             double price=getItem(position).getPrice();
             String iscomputed=getItem(position).getIscomputed();
             double qty=getItem(position).getQty();
+            String isgrab=getItem(position).getIsgrab();
 
 
-            Temp_content temp=new Temp_content(product,uom_name,isnega,isact,id,price,iscomputed,qty,getItem(position).getFav());
+            Temp_content temp=new Temp_content(product,uom_name,isnega,isact,id,price,iscomputed,qty,getItem(position).getFav(),isgrab);
             LayoutInflater inflater=LayoutInflater.from(mContext);
             convertView=inflater.inflate(mResource,parent,false);
 
@@ -54,6 +56,9 @@ public class My_temp_adapter extends ArrayAdapter<Temp_content> {
             }else{
                 quantity.setText(String.valueOf(qty));
             }
+
+
+
             prod.setText(product);
             uom.setText(uom_name);
             priceent.setText(String.valueOf(price));
@@ -64,6 +69,10 @@ public class My_temp_adapter extends ArrayAdapter<Temp_content> {
                 quantity.setText("");
                 uom.setText("");
                 isnegative.setText("");
+            }
+
+            if(isgrab.equals("Y")){
+                prod.setBackgroundColor(Color.parseColor("#FF9CC1E7"));
             }
         }catch (Exception e){
             e.printStackTrace();

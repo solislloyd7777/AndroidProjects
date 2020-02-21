@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
+import com.github.mikephil.charting.data.BarEntry;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -180,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<String> getProduct(String sku,int temp_id){
+    public ArrayList<String>  getProduct(String sku,int temp_id){
         ArrayList<String>list=new ArrayList<String>();
         db=this.getReadableDatabase();
         db.beginTransaction();
@@ -194,7 +196,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if(cursor.getCount()>0){
                     while (cursor.moveToNext()){
                         boolean status=check_prod_temp(temp_id,cursor.getInt(1));
-                        if(!status){
+                        if(status){
+
                             String prod=cursor.getString(0);
                             list.add(prod);
                         }
@@ -207,7 +210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor=db.rawQuery(selectQuery,null);
                 if(cursor.getCount()>0){
                     while (cursor.moveToNext()){
-                        boolean status=check_prod_temp(temp_id,cursor.getInt(1));
+                        boolean status=check_prod_temp1(temp_id,cursor.getInt(1));
                         if(!status){
                             String prod=cursor.getString(0);
                             list.add(prod);
@@ -236,9 +239,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean status=false;
         try{
 
-            curs=db.rawQuery("select * from mh_template_line where mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'",null);
+            curs=db.rawQuery("select count(mh_transaction_template_id) from mh_template_line where mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'",null);
             if(curs.moveToFirst()){
-                status=true;
+                if(curs.getInt(0)<=1){
+                    status=true;
+
+                }else {
+                    status=false;
+                }
+            }else {
+                status=false;
+            }
+            curs.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return status;
+
+    }
+
+    public boolean check_prod_temp1(int temp_id,int prod_id){
+
+        db=getReadableDatabase();
+        boolean status=false;
+        try{
+
+            curs=db.rawQuery("select count(mh_transaction_template_id) from mh_template_line where mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'",null);
+            if(curs.moveToFirst()){
+                if(curs.getInt(0)>0){
+                    status=true;
+
+                }else {
+                    status=false;
+                }
             }else {
                 status=false;
             }
@@ -523,11 +557,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
-    public void insert_transaction_temp1(int temp_id,int prod_id,int uom_id,double price,String isnegative,String is_computed,String created,String created_by,String active){
+    public void insert_transaction_temp1(int temp_id,int prod_id,int uom_id,double price,String isnegative,String is_computed,String created,String created_by,String active,String isGrab){
         db=getWritableDatabase();
         try{
-            db.execSQL("insert into mh_template_line_temp(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,isnegtative,is_computed,created,created_by,isactive) " +
-                    "values ('"+temp_id+"','"+prod_id+"','"+uom_id+"',0,'"+price+"','"+isnegative+"','"+is_computed+"','"+created+"','"+created_by+"','"+active+"')");
+            db.execSQL("insert into mh_template_line_temp(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,isnegtative,is_computed,created,created_by,isactive,isgrab) " +
+                    "values ('"+temp_id+"','"+prod_id+"','"+uom_id+"',0,'"+price+"','"+isnegative+"','"+is_computed+"','"+created+"','"+created_by+"','"+active+"','"+isGrab+"')");
 
 
         }catch (Exception e){
@@ -697,7 +731,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String locator=cursor.getString(6);
                     String product=cursor.getString(7);
                     String uom=cursor.getString(8);
-                    int qty=cursor.getInt(9);
+                    double qty=cursor.getDouble(9);
                     double price=cursor.getDouble(10);
                     double subtotal=cursor.getDouble(11);
                     String isnegative=cursor.getString(12);
@@ -705,7 +739,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String date_req=cursor.getString(14);
                     String date_ref=cursor.getString(15);
                     String created_by=cursor.getString(16);
-
                     Created_transaction_module created_transaction_module = new Created_transaction_module(name,doc_num,branch_name,file_name,ref_num,remarks,locator,product,uom,qty,price,subtotal,isnegative,iscomputed,date_req,date_ref,created_by);
 
                     created_list.add(created_transaction_module);
@@ -976,7 +1009,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
 
 
-            curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,isnegative,is_computed,isactive,quantity_def0,favorite from mh_template_line where mh_template_id='"+id1+"' order by favorite desc ", null);
+            curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,isnegative,is_computed,isactive,quantity_def0,favorite,isgrab from mh_template_line where mh_template_id='"+id1+"' order by favorite desc ", null);
             curs.moveToFirst();
             if (curs.getCount() > 0) {
                 do {
@@ -989,8 +1022,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     String isact = curs.getString(6);
                     double qty=curs.getDouble(7);
                     int fav=curs.getInt(8);
+                    String isgrab=curs.getString(9);
 
-                    Temp_content temp_cont = new Temp_content(prod_name,uom,isnega,isact,id,price,iscomputed,qty,fav);
+
+                    Temp_content temp_cont = new Temp_content(prod_name,uom,isnega,isact,id,price,iscomputed,qty,fav,isgrab);
 
                     content1.add(temp_cont);
 
@@ -1028,7 +1063,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 do {
                     int id2 = cursor.getInt(0);
-                    curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,isnegative,is_computed,isactive,quantity_def0,favorite from mh_template_line where mh_template_id='" + id1 + "' and mh_product_id='" + id2 + "'", null);
+                    curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,isnegative,is_computed,isactive,quantity_def0,favorite,isgrab from mh_template_line where mh_template_id='" + id1 + "' and mh_product_id='" + id2 + "'", null);
                     if(curs.moveToFirst()) {
                         if (curs.getCount() > 0) {
                             do {
@@ -1041,8 +1076,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                 isact = curs.getString(6);
                                 qty = curs.getDouble(7);
                                 int favorite=curs.getInt(8);
+                                String isgrab=curs.getString(9);
 
-                                Temp_content temp_cont = new Temp_content(prod_name, uom, isnega, isact, id, price, iscomputed, qty,favorite);
+                                Temp_content temp_cont = new Temp_content(prod_name, uom, isnega, isact, id, price, iscomputed, qty,favorite,isgrab);
 
                                 content1.add(temp_cont);
 
@@ -1058,7 +1094,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     }
                 } while (cursor.moveToNext());
             }else {
-                Temp_content temp_cont = new Temp_content("No Result Found", "", "", "", 0, 0, "",0,0);
+                Temp_content temp_cont = new Temp_content("No Result Found", "", "", "", 0, 0, "",0,0,"");
 
                 content1.add(temp_cont);
             }
@@ -1094,7 +1130,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db=getReadableDatabase();
         boolean status=false;
         try {
-            cursor = db.rawQuery("select mh_product_id from mh_template_line where mh_product_id='" + prod_id + "' and mh_template_id='" + id + "'", null);
+            cursor = db.rawQuery("select count(mh_transaction_template_id) from mh_template_line where mh_product_id='" + prod_id + "' and mh_template_id='" + id + "'", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 status=false;
@@ -1176,20 +1212,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
-    public void update_trans_temp(int temp_id,int prod_id, int uom_id, double price,double qty, String isnega, String iscomputed,String updated, String updated_by,int fav) {
+    public void update_trans_temp(int trans_temp_id,int temp_id,int prod_id, int uom_id, double price,double qty, String isnega, String iscomputed,String updated, String updated_by,int fav,String isgrab) {
         db=getWritableDatabase();
         try{
             db.execSQL("update mh_template_line set c_uom_id='"+uom_id+"',priceentered='"+price+"',quantity_def0='"+qty+"',isnegative='"+isnega+"',is_computed='"+iscomputed+"',updated='"+
-                    updated+"',updated_by='"+updated_by+"',favorite='"+fav+"' where mh_template_Id='"+temp_id+"' and mh_product_id='"+prod_id+"'");
+                    updated+"',updated_by='"+updated_by+"',favorite='"+fav+"', isgrab='"+isgrab+"' where mh_transaction_template_id='"+trans_temp_id+"'");
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public void deleteTrans_item(int temp_id,int prod_id) {
+    public void deleteTrans_item(int temp_id,int prod_id,String isgrab) {
         db=getWritableDatabase();
         try{
-            db.execSQL("delete from mh_template_line where  mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'");
+            db.execSQL("delete from mh_template_line where  mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"' and isgrab='"+isgrab+"'");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1222,7 +1258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
 
 
-            curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,is_computed,subtotal,priceentered_temporary,quantity_def0_temporary,changed,favorite from mh_transaction_line_temporary where mh_template_id='"+temp_id+"'", null);
+            curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,is_computed,subtotal,priceentered_temporary,quantity_def0_temporary,changed,favorite,isgrab from mh_transaction_line_temporary where mh_template_id='"+temp_id+"'", null);
             curs.moveToFirst();
             if (curs.getCount() > 0) {
                 do {
@@ -1238,8 +1274,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     double qty_temp=curs.getDouble(9);
                     String change=curs.getString(10);
                     int fav=curs.getInt(11);
+                    String isgrab=curs.getString(12);
 
-                    Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,fav);
+                    Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,fav,isgrab);
 
                     content.add(trans_cont);
 
@@ -1273,6 +1310,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double price_temp=0.0;
         String change="";
         double subtotal=0.0;
+        String isgrab="";
         try {
 
             cursor=db.rawQuery("select mh_product_id from m_product where name like '%"+text+"%'",null);
@@ -1280,7 +1318,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     int ids = cursor.getInt(0);
 
-                    curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,is_computed,subtotal,priceentered_temporary,quantity_def0_temporary,changed,favorite from mh_transaction_line_temporary where mh_template_id='" + temp_id + "' and mh_product_id='"+ids+"'", null);
+                    curs = db.rawQuery("SELECT mh_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,is_computed,subtotal,priceentered_temporary,quantity_def0_temporary,changed,favorite,isgrab from mh_transaction_line_temporary where mh_template_id='" + temp_id + "' and mh_product_id='"+ids+"'", null);
                     curs.moveToFirst();
                     if (curs.getCount() > 0) {
                         do {
@@ -1296,8 +1334,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             qty_temp = curs.getDouble(9);
                             change = curs.getString(10);
                             int fav=curs.getInt(11);
+                            isgrab=curs.getString(12);
 
-                            Trans_line trans_cont = new Trans_line(id, prod_name, uom, price, qty, isnegative, iscomputed, qty_temp, price_temp, change,fav);
+                            Trans_line trans_cont = new Trans_line(id, prod_name, uom, price, qty, isnegative, iscomputed, qty_temp, price_temp, change,fav,isgrab);
 
                             content.add(trans_cont);
 
@@ -1313,7 +1352,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     }
                 } while (cursor.moveToNext());
             }else{
-                Trans_line trans_cont = new Trans_line(id, prod_name, uom, price, qty, isnegative, iscomputed, qty_temp, price_temp, change,0);
+                Trans_line trans_cont = new Trans_line(id, prod_name, uom, price, qty, isnegative, iscomputed, qty_temp, price_temp, change,0,isgrab);
 
                 content.add(trans_cont);
             }
@@ -1339,8 +1378,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double qty_temp=0.0;
         double price_temp=0.0;
         String change="";
+        String isgrab="";
         try {
-                    curs = db.rawQuery("SELECT mh_delivery_report_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,iscomputed,quantity_def0_temporary,priceentered_temporary,changed from mh_delivery_report_line where mh_delivery_report_template_id='"+id1+"'", null);
+                    curs = db.rawQuery("SELECT mh_delivery_report_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,iscomputed,quantity_def0_temporary,priceentered_temporary,changed,isgrab from mh_delivery_report_line where mh_delivery_report_template_id='"+id1+"'", null);
                     curs.moveToFirst();
                     if (curs.getCount() > 0) {
                         do {
@@ -1355,8 +1395,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             price_temp=curs.getDouble(8);
 
                             change=curs.getString(9);
+                            isgrab=curs.getString(10);
 
-                            Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0);
+                            Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0,isgrab);
 
                             content.add(trans_cont);
 
@@ -1391,13 +1432,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double qty_temp=0.0;
         double price_temp=0.0;
         String change="";
+        String isgrab="";
         try {
 
             cursor=db.rawQuery("select mh_product_id from m_product where name like '%"+text+"%'",null);
             if(cursor.moveToFirst()) {
                 do{
                     int ids=cursor.getInt(0);
-                    curs = db.rawQuery("SELECT mh_delivery_report_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,iscomputed,quantity_def0_temporary,priceentered_temporary,changed from mh_delivery_report_line where mh_delivery_report_template_id='"+id1+"' and mh_product_id='"+ids+"'", null);
+                    curs = db.rawQuery("SELECT mh_delivery_report_template_id,mh_product_id,c_uom_id,priceentered,quantity_def0,isnegative,iscomputed,quantity_def0_temporary,priceentered_temporary,changed,isgrab from mh_delivery_report_line where mh_delivery_report_template_id='"+id1+"' and mh_product_id='"+ids+"'", null);
                     curs.moveToFirst();
                     if (curs.getCount() > 0) {
                         do {
@@ -1411,8 +1453,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             qty_temp=curs.getDouble(7);
                             price_temp=curs.getDouble(8);
                             change=curs.getString(9);
+                            isgrab=curs.getString(10);
 
-                            Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0);
+                            Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0,isgrab);
 
                             content.add(trans_cont);
 
@@ -1429,7 +1472,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 }while (cursor.moveToNext());
             }else{
-                Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0);
+                Trans_line trans_cont = new Trans_line(id,prod_name,uom,price,qty,isnegative,iscomputed,qty_temp,price_temp,change,0,isgrab);
 
                 content.add(trans_cont);
             }
@@ -1512,10 +1555,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return status;
     }*/
-    public void update_trans_temp1(int transact_id,int temp_id,double quantity,int prod,double price,String subtotal,String created,String created_by,String changed){
+    public void update_trans_temp1(int transact_id,int temp_id,double quantity,int prod,double price,String subtotal,String created,String created_by,String changed,String isgrab){
         db=getWritableDatabase();
         try{
-            db.execSQL("update mh_transaction_line_temporary set quantity_def0_temporary='"+quantity+"',priceentered_temporary='"+price+"',subtotal='"+subtotal+"', created='"+created+"',created_by='"+created_by+"',changed='"+changed+"' where mh_template_id='"+temp_id+"' and mh_product_id='"+prod+"'");
+            db.execSQL("update mh_transaction_line_temporary set quantity_def0_temporary='"+quantity+"',priceentered_temporary='"+price+"',subtotal='"+subtotal+"', created='"+created+"',created_by='"+created_by+"',changed='"+changed+"' where mh_template_id='"+temp_id+"' and mh_product_id='"+prod+"' and isgrab='"+isgrab+"'");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -2864,11 +2907,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         curs.close();
     }*/
 
-    public void insert_transaction_temp11(int temp_id,int prod_id,int uom_id,double price,String isnegative,String created,String created_by,String active,double qty,int fav,String iscomputed){
+    public void insert_transaction_temp11(int temp_id,int prod_id,int uom_id,double price,String isnegative,String created,String created_by,String active,double qty,int fav,String iscomputed,String isgrab){
         db=getWritableDatabase();
         try{
-            db.execSQL("insert into mh_template_line(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,isnegative,created,created_by,isactive,favorite,is_computed) " +
-                    "values ('"+temp_id+"','"+prod_id+"','"+uom_id+"','"+qty+"','"+price+"','"+isnegative+"','"+created+"','"+created_by+"','"+active+"','"+fav+"','"+iscomputed+"')");
+            db.execSQL("insert into mh_template_line(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,isnegative,created,created_by,isactive,favorite,is_computed,isgrab) " +
+                    "values ('"+temp_id+"','"+prod_id+"','"+uom_id+"','"+qty+"','"+price+"','"+isnegative+"','"+created+"','"+created_by+"','"+active+"','"+fav+"','"+iscomputed+"','"+isgrab+"')");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -3716,7 +3759,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db=getWritableDatabase();
         try{
-            cursor=db.rawQuery("select mh_product_id,c_uom_id,quantity_def0,priceentered,isnegative,is_computed,mh_template_id,favorite from mh_template_line order by favorite desc",null);
+            cursor=db.rawQuery("select mh_product_id,c_uom_id,quantity_def0,priceentered,isnegative,is_computed,mh_template_id,favorite,isgrab from mh_template_line order by favorite desc",null);
             cursor.moveToFirst();
             do{
                 int prod_id=cursor.getInt(0);
@@ -3727,7 +3770,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String iscomputed=cursor.getString(5);
                 int temp_id=cursor.getInt(6);
                 int fav=cursor.getInt(7);
-                db.execSQL("insert into mh_transaction_line_temporary(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,priceentered_temporary,quantity_def0_temporary,isnegative,is_computed,favorite) values('"+temp_id+"','"+prod_id+"','"+uom_id+"','"+qty+"','"+price+"','"+price+"','"+qty+"','"+isnegative+"','"+iscomputed+"','"+fav+"')");
+                String isgrab=cursor.getString(8);
+                db.execSQL("insert into mh_transaction_line_temporary(mh_template_id,mh_product_id,c_uom_id,quantity_def0,priceentered,priceentered_temporary,quantity_def0_temporary,isnegative,is_computed,favorite,isgrab) values('"+temp_id+"','"+prod_id+"','"+uom_id+"','"+qty+"','"+price+"','"+price+"','"+qty+"','"+isnegative+"','"+iscomputed+"','"+fav+"','"+isgrab+"')");
             }while (cursor.moveToNext());
 
         }catch (Exception e){
@@ -4539,4 +4583,221 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return line;
     }
+
+    public int gettrans_temp_id(int prod_id, int id, String isgrab) {
+        db=getReadableDatabase();
+        int temp_id=0;
+        try{
+            cursor=db.rawQuery("select mh_transaction_template_id from mh_template_line where mh_template_id='"+id+"' and mh_product_id='"+prod_id+"' and isgrab='"+isgrab+"'",null);
+            cursor.moveToFirst();
+            temp_id=cursor.getInt(0);
+
+            cursor.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return temp_id;
+
+    }
+
+    public int getNum_count(int temp_id, int prod_id) {
+        db=getReadableDatabase();
+        int count=0;
+        try{
+            cursor=db.rawQuery("select count(mh_transaction_template_id) from mh_template_line where mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'",null);
+            if(cursor.moveToFirst()){
+                count=2;
+            }else{
+                count=1;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public String getGrab(int temp_id, int prod_id) {
+        String grab="N";
+        db=getReadableDatabase();
+        try{
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return grab;
+    }
+
+    public boolean check_exist(int temp_id, int prod_id){
+        boolean status=false;
+        db=getReadableDatabase();
+        try{
+            cursor=db.rawQuery("SELECT isgrab from mh_template_line where mh_template_id='"+temp_id+"' and mh_product_id='"+prod_id+"'",null);
+            if(cursor.moveToFirst()){
+                if(cursor.getString(0).equals("N")){
+                    status=true;
+                }else {
+                    status=false;
+                }
+            }else{
+                status=false;
+            }
+
+            cursor.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    public int getTransaction_sales(){
+        int number_sales=0;
+        db=getReadableDatabase();
+        try{
+            cursor=db.rawQuery("select count(mh_transaction_id) from mh_transaction where mh_temlplate_id=1",null);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return number_sales;
+    }
+
+    public List<Performance_list> getTrans_sales() {
+        List<Performance_list> content=new ArrayList<>();
+        SQLiteDatabase db= getReadableDatabase();
+        try {
+
+
+            curs = db.rawQuery("select created,gross_sale from mh_transaction where mh_template_id=1",null);
+            curs.moveToFirst();
+            if (curs.getCount() > 0) {
+                do {
+
+
+                    Performance_list performance_list = new Performance_list(curs.getString(0),curs.getFloat(1));
+
+                    content.add(performance_list);
+
+
+                } while (curs.moveToNext());
+
+            }
+            if (curs!= null){
+                curs.close();
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+
+    /*public List<Prod_list> getProdlist() {
+        List<Prod_list> content = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+
+
+            curs = db.rawQuery("SELECT mh_branch_id,branch_name,branch_type,set_branch,isactive from mh_branch where not set_branch=1 order by branch_name asc ", null);
+            curs.moveToFirst();
+            if (curs.getCount() > 0) {
+                do {
+                    int branch_id = curs.getInt(0);
+                    String name = curs.getString(1);
+                    String branch_type = curs.getString(2);
+                    int set_branch = curs.getInt(3);
+                    String isactive = curs.getString(4);
+
+                    Branch_list branch_list = new Branch_list(branch_id, name,branch_type,set_branch,isactive);
+
+                    content.add(branch_list);
+
+
+                } while (curs.moveToNext());
+
+            } else {
+                Branch_list branch_list = new Branch_list(0, "No Branch yet", "",0,"");
+
+                content.add(branch_list);
+            }
+            if (curs != null) {
+                curs.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content;
+
+     */
+
+    public ArrayList<BarEntry>  getYvalue(){
+        ArrayList<BarEntry>list=new ArrayList<BarEntry>();
+        db=this.getReadableDatabase();
+        db.beginTransaction();
+        int count=0;
+        try{
+
+                String selectQuery="select gross_sale from mh_transaction where mh_template_id=1";
+                cursor=db.rawQuery(selectQuery,null);
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()){
+                            double gross=cursor.getDouble(0);
+                            list.add(new BarEntry(count, (float) gross));
+                            count++;
+                        }
+                    }
+
+                db.setTransactionSuccessful();
+
+            cursor.close();
+
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+            db.endTransaction();
+            db.close();
+        }
+        return list;
+    }
+
+    public boolean check_recipient1(String tablename3) {
+        db=getReadableDatabase();
+        boolean status=false;
+        try{
+            cursor=db.rawQuery("select send_to from '"+tablename3+"'",null);
+            if(cursor.moveToFirst()){
+                if(!cursor.getString(0).equals("mhsoar.inventory@gmail.com")){
+                    status=false;
+                }else{
+                    status=true;
+                }
+
+            }
+            else{
+                status=false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        cursor.close();
+        return status;
+    }
+
+    public void update_recipient(){
+        db=getWritableDatabase();
+        try{
+            db.execSQL("update mh_delivery_report_template set send_to='mhsoar.inventory@gmailcom'");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 }

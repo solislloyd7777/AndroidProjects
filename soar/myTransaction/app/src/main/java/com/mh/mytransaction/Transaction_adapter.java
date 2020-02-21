@@ -2,6 +2,7 @@ package com.mh.mytransaction;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +33,14 @@ public class Transaction_adapter extends ArrayAdapter<Trans_line> {
             double price_temp=getItem(position).getPrice_temp();
             double qty_temp=getItem(position).getQty_temp();
             String changed=getItem(position).getChanged();
+            String isgrab=getItem(position).getIsgrab();
             double subtotal;
             String isnegative=getItem(position).getIsnegative();
             String iscomputed=getItem(position).getIs_computed();
             int fav=getItem(position).getFav();
             String total;
 
-            Trans_line tline=new Trans_line(temp_id,product,uom_name,price,quantity,isnegative,iscomputed,qty_temp,price_temp,changed,fav);
+            Trans_line tline=new Trans_line(temp_id,product,uom_name,price,quantity,isnegative,iscomputed,qty_temp,price_temp,changed,fav,isgrab);
             LayoutInflater inflater=LayoutInflater.from(mContext);
             convertView=inflater.inflate(mResource,parent,false);
 
@@ -94,6 +96,13 @@ public class Transaction_adapter extends ArrayAdapter<Trans_line> {
                     uom.setBackgroundColor(Color.parseColor("#EEEDEF"));
                 }
 
+                if(isgrab.equals("Y")){
+                    prod.setTypeface(null, Typeface.BOLD);
+                    qty.setTypeface(null, Typeface.BOLD);
+                    priceent.setTypeface(null, Typeface.BOLD);
+                    sub.setTypeface(null, Typeface.BOLD);
+                    uom.setTypeface(null, Typeface.BOLD);
+                }
 
         }catch (Exception e){
             e.printStackTrace();

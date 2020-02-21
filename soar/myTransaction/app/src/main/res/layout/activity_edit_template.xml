@@ -27,33 +27,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="10dp"
+                android:gravity="center"
                 android:id="@+id/for_back">
                 <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/ic_back1"
                     android:id="@+id/back"
                     />
             </LinearLayout>
 
-            <Spinner
+            <TextView
                 android:id="@+id/spin_temp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight=".30"
+                android:gravity="center"
+                android:textColor="#000000"
                 />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="5dp"
+                android:gravity="center"
                 android:id="@+id/for_import">
                 <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_toEndOf="@+id/spin_temp"
-                    android:layout_weight="1"
                     android:background="@drawable/ic_import5"
                     android:id="@+id/import_template"/>
             </LinearLayout>
@@ -182,8 +184,6 @@
     </RelativeLayout>
     </LinearLayout>
     </LinearLayout>
-
-
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -192,4 +192,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/activity_navigate_drawer" />
+
+
+
 </android.support.v4.widget.DrawerLayout>

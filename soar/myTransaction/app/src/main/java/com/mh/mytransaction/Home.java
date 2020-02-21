@@ -1,12 +1,17 @@
 package com.mh.mytransaction;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +31,7 @@ import java.util.Calendar;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+    private int STORAGE_PERMISSION_CODE=1;
     DatabaseHelper dh;
     private DatePickerDialog.OnDateSetListener mydate, mydate1;
     @Override
@@ -34,6 +40,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         setContentView(R.layout.activity_home);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        checkPermissions();
         dh=new DatabaseHelper(this);
         dh.updateadmin();
     }
@@ -1075,6 +1082,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
 
             }else if(id == R.id.nav_logout){
+                /*Intent in=new Intent(this,Performance.class);
+                startActivity(in);*/
 
             }
             else if(id == R.id.nav_exit){
@@ -1112,5 +1121,57 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         return true;
     }
 
+    /*<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />*/
+
+    /*private void checkPermissions(){
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+            int permissionCheck=this.checkSelfPermission("Manifest.permission.READ_EXTERNAL_STORAGE");
+             permissionCheck +=this.checkSelfPermission("Manifest.permission.WRITE_EXTERNAL_STORAGE");
+            permissionCheck +=this.checkSelfPermission("Manifest.permission.INTERNET");
+            permissionCheck +=this.checkSelfPermission("Manifest.permission.ACCESS_NETWORK_STATE");
+            permissionCheck +=this.checkSelfPermission("Manifest.permission.ACCESS_WIFI_STATE");
+            permissionCheck +=this.checkSelfPermission("Manifest.permission.CALL_PHONE");
+            permissionCheck +=this.checkSelfPermission("Manifest.permission.BLUETOOTH");
+
+            if(permissionCheck!=0){
+                this.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.ACCESS_WIFI_STATE,Manifest.permission.CALL_PHONE,Manifest.permission.BLUETOOTH},1001);
+            }else{
+
+            }
+        }else{
+        }
+    }*/
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+        }else{
+            requestStoragePermission();
+        }
+    }
+
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode==STORAGE_PERMISSION_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this,"Permission Granted",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this,"Permission Denied",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

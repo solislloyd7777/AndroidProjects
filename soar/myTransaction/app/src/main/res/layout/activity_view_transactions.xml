@@ -29,13 +29,19 @@
                 android:layout_weight=".10"
                 android:id="@+id/name"/>
 
-            <ImageButton
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="0dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_menu"
-                android:id="@+id/menu"/>
+                android:gravity="center"
+                android:id="@+id/for_back">
+                <ImageButton
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_menu"
+                    android:id="@+id/menu"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout

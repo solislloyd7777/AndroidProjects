@@ -248,6 +248,10 @@ public class compile_transaction extends AppCompatActivity implements Navigation
                         list1 = dh.getDelivery_List(fdate.getText().toString(), tdate.getText().toString());
                         File_adapter adapter1 = new File_adapter(compile_transaction.this, R.layout.file_list_layout, list1);
                         myListView.setAdapter(adapter1);
+                        boolean check_recipient=dh.check_recipient1(tablename3);
+                        if(!check_recipient){
+                            dh.update_recipient();
+                        }
                     }else{
                         tablename="mh_transaction";
                         tablename3="mh_template";
@@ -278,6 +282,11 @@ public class compile_transaction extends AppCompatActivity implements Navigation
                     boolean check_recipient=dh.check_recipient(tablename);
                     if(check_recipient){
                         String sendto=dh.getTemlpate_id(tablename);
+                        /*if(tablename.equals("mh_delivery_report")){
+                            sendto="mhsoar.inventory@gmail.com";
+                        }else{
+                            sendto=dh.getTemlpate_id(tablename);
+                        }*/
                         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{sendto});
                         ArrayList<Uri> uris = new ArrayList<>();
                         for (String file : filePaths) {
@@ -419,7 +428,7 @@ public class compile_transaction extends AppCompatActivity implements Navigation
         if(tablename.equals("mh_delivery_report")){
             tablename1="mh_delivery_report_line";
             tablename2="mh_delivery_report_template";
-            prc="priceentered_temporary";
+            prc="quantity_def0";
             qty="quantity_def0_temporary";
         }else{
             tablename1="mh_transaction_line";
@@ -465,13 +474,18 @@ public class compile_transaction extends AppCompatActivity implements Navigation
                             if(o==0){
                                 printWriter.println(label[o] + "," + temp_name);
                             }else if(o==17){
-                                printWriter.println(label[o] + "," + info[17].replace("-","/"));
+                                printWriter.println(label[o] + "," + info[17]);
                             }else{
                                 printWriter.println(label[o] + "," + info[o-1]);
                             }
                         }
                         printWriter.println();
-                        printWriter.println("BRANCH,LOCATOR,PRODUCT,UOM,PRICE,QUANTITY,SUBTOTAL,DATE REQUIREMENT,REMARKS,REFERENCE NUMBER");
+                        if(!tablename.equals("mh_delivery_report")){
+                            printWriter.println("BRANCH,LOCATOR,PRODUCT,UOM,PRICE,QUANTITY,SUBTOTAL,DATE REQUIREMENT,REMARKS,REFERENCE NUMBER");
+                        }else{
+                            printWriter.println("BRANCH,LOCATOR,PRODUCT,UOM,ORIG QUANTITY,ENTERED QUANTITY,SUBTOTAL,DATE REQUIREMENT,REMARKS,REFERENCE NUMBER");
+                        }
+
                         try {
                             db = dh.getReadableDatabase();
                             String branch=dh.getbranch_name(Integer.parseInt(info[16]));

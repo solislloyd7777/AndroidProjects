@@ -446,7 +446,12 @@ public class Emp_template_list extends AppCompatActivity implements NavigationVi
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
-            } else if (id == R.id.nav_deliver) {
+            } else if (id == R.id.nav_created) {
+                //String name=dh.getEmp_name(code.getText().toString());
+                Intent in = new Intent(Emp_template_list.this, Created_transactions.class);
+                in.putExtra("emp_name",getIntent().getStringExtra("emp_name"));
+                startActivity(in);
+            }else if (id == R.id.nav_deliver) {
 
 
                                     Intent in=new Intent(Emp_template_list.this,Delivery_report.class);

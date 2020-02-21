@@ -40,6 +40,7 @@
             android:inputType="textPassword"
             android:layout_marginTop="10dp"
             android:hint="Enter Current Password"
+            android:digits="0123456789qwertzuiopasdfghjklyxcvbnm@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             android:gravity="center_vertical"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -59,6 +60,7 @@
                 android:inputType="textPassword"
                 android:layout_marginTop="10dp"
                 android:hint="Enter New Password"
+                android:digits="0123456789qwertzuiopasdfghjklyxcvbnm@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 android:gravity="center_vertical"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -78,6 +80,7 @@
                 android:inputType="textPassword"
                 android:layout_marginTop="10dp"
                 android:hint="Confirm Password"
+                android:digits="0123456789qwertzuiopasdfghjklyxcvbnm@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 android:gravity="center_vertical"/>
         </android.support.design.widget.TextInputLayout>
 

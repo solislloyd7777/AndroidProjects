@@ -62,7 +62,8 @@ public class Request extends AppCompatActivity implements NavigationView.OnNavig
             int count = dh.getReq_count(branch_id);
             int id_count = 100000 + count;
 
-            String branch_name = dh.getBranch_name1(branch_id).replace(" ", "_");
+            //String branch_name = dh.getBranch_name1(branch_id).replace(" ", "_");
+            String branch_name = dh.getBranch_name1(branch_id);
             String branch_name1=branch_name.substring(0,3);
 
                 final String document_num = id_count + "_" + branch_name1 + "_" + created.replace("-", "").replace(" ", "").replace(":", "") +"_REQ";
@@ -90,6 +91,7 @@ public class Request extends AppCompatActivity implements NavigationView.OnNavig
                                 int id_count1 = 100000 + count1;
 
                                 String branch_name2 = dh.getBranch_name1(branch_id).replace(" ", "_");
+                                //String branch_name2 = dh.getBranch_name1(branch_id);
                                 String branch_name3=branch_name2.substring(0,3);
                                 final String document_num1 = id_count1 + "_" + branch_name3 + "_" + created.replace("-", "").replace(" ", "").replace(":", "")+"_REQ";
 
@@ -185,7 +187,7 @@ public class Request extends AppCompatActivity implements NavigationView.OnNavig
                     emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     emailIntent.setType("text/csv");
 
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"gsd@henlin.com.ph"});
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mhsoar.inventory@gmail.com"});
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, doc_num);
                     emailIntent.putExtra(Intent.EXTRA_TEXT, "");
 

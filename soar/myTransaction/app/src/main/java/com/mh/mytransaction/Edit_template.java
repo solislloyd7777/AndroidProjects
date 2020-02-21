@@ -45,7 +45,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
 
 
     String created="",created_by="",updated="",updated_by="",isactive="Y";
-    Spinner name;
+    TextView name;
     List<Temp_content> list1,list2;
     DatabaseHelper dh;
     ListView mListView1;
@@ -54,6 +54,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
     SearchView search;
     int identifier=0;
     int fav=0,fav1=0;
+    int positioning=0;
     double pricee=0.0,qtyy=0.0;
     private DatePickerDialog.OnDateSetListener mydate, mydate1;
     @Override
@@ -62,7 +63,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
         setContentView(R.layout.activity_edit_template);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        name=(Spinner)findViewById(R.id.spin_temp);
+        name=(TextView)findViewById(R.id.spin_temp);
         mListView1=(ListView)findViewById(R.id.my_listView);
         import_template=(ImageButton)findViewById(R.id.import_template);
         add_product=(ImageButton)findViewById(R.id.add_prod);
@@ -74,20 +75,23 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
 
 
 
+
         search.setVisibility(View.GONE);
         name.setVisibility(View.VISIBLE);
         for_import.setVisibility(View.VISIBLE);
         String template_name=getIntent().getStringExtra("Template");
+        name.setText(template_name);
 
         dh=new DatabaseHelper(this);
-        final ArrayList<String> list=dh.getTemp_list();
+        /*final ArrayList<String> list=dh.getTemp_list();
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,R.layout.spinner_layout,R.id.txt,list);
         name.setAdapter(adapter);
-        name.setSelection(getIndex(name,template_name));
-        final int temp_id=dh.getTemp_id(name.getSelectedItem().toString());
-        viewData(temp_id);
+        name.setSelection(getIndex(name,template_name));*/
+        //final int temp_id=dh.getTemp_id(name.getSelectedItem().toString());
+        final int temp_id=dh.getTemp_id(template_name);
+        viewData(temp_id,positioning);
 
-        name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*name.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int mytemp_id=dh.getTemp_id(name.getSelectedItem().toString());
@@ -95,6 +99,9 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                     list1=dh.getTemp_content(mytemp_id);
                     My_temp_adapter adapter2=new My_temp_adapter(Edit_template.this,R.layout.my_list_dialog,list1);
                     mListView1.setAdapter(adapter2);
+
+
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -102,13 +109,12 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
-        });
+        });*/
 
         mListView1.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
                     try {
                         final Temp_content temp_content = list1.get(position);
@@ -124,9 +130,11 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                             final TextView uom = (TextView) mview.findViewById(R.id.spinner_uom);
                             final Spinner isnegs = (Spinner) mview.findViewById(R.id.spin_nega);
                             final Spinner iscomputed=(Spinner)mview.findViewById(R.id.spin_computed);
+                            final Spinner isgrab=(Spinner)mview.findViewById(R.id.spin_grab);
                             final EditText price = (EditText) mview.findViewById(R.id.edit_price);
                             final EditText qty = (EditText) mview.findViewById(R.id.edit_qty);
                             final ImageButton favorite=(ImageButton)mview.findViewById(R.id.favorite);
+                            final String[] grab = {"N"};
 
 
                             prod_name.setText(temp_content.getProd());
@@ -185,7 +193,13 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                             ArrayAdapter<String> adapter3=new ArrayAdapter<String>(Edit_template.this,R.layout.spinner_layout,R.id.txt,list3);
                             iscomputed.setAdapter(adapter3);
 
+                            String[] list4=isgrab();
+                            ArrayAdapter<String> adapter4=new ArrayAdapter<String>(Edit_template.this,R.layout.spinner_layout,R.id.txt,list4);
+                            isgrab.setAdapter(adapter4);
+
                             iscomputed.setSelection(getIndex(iscomputed, temp_content.getIscomputed()));
+                            isgrab.setSelection(getIndex(isgrab, temp_content.getIsgrab()));
+                            positioning=1;
                             builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -204,13 +218,16 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                                     try {
 
                                             int uom_id=dh.getUom_id(uom.getText().toString());
+
                                             int prod_id=dh.get_prod_id(prod_name.getText().toString());
-                                            dh.update_trans_temp(temp_content.getId(),prod_id,uom_id,pricee,qtyy,isnegs.getSelectedItem().toString(),iscomputed.getSelectedItem().toString(),updated,updated_by,fav);
+                                            int trans_temp_id=dh.gettrans_temp_id(prod_id,temp_content.getId(),isgrab.getSelectedItem().toString());
+                                            dh.update_trans_temp(trans_temp_id,temp_content.getId(),prod_id,uom_id,pricee,qtyy,isnegs.getSelectedItem().toString(),iscomputed.getSelectedItem().toString(),updated,updated_by,fav,isgrab.getSelectedItem().toString());
                                             Toast.makeText(Edit_template.this,"Successfully Updated",Toast.LENGTH_SHORT).show();
                                             /*Intent in = new Intent(Edit_template.this, Edit_template.class);
                                             in.putExtra("Template",name.getSelectedItem().toString());
                                             startActivity(in);*/
-                                            viewData(temp_id);
+
+                                            viewData(temp_id,positioning);
                                             dialog.cancel();
 
                                     } catch (Exception e) {
@@ -228,12 +245,12 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                                 public void onClick(DialogInterface dialog, int which) {
                                     try {
                                         int prod_id=dh.get_prod_id(prod_name.getText().toString());
-                                        dh.deleteTrans_item(temp_content.getId(),prod_id);
+                                        dh.deleteTrans_item(temp_content.getId(),prod_id,isgrab.getSelectedItem().toString());
                                         Toast.makeText(Edit_template.this,"Successfully Removed",Toast.LENGTH_SHORT).show();
                                         /*Intent in = new Intent(Edit_template.this, Edit_template.class);
                                         in.putExtra("Template",name.getSelectedItem().toString());
                                         startActivity(in);*/
-                                        viewData(temp_id);
+                                        viewData(temp_id,position);
                                         dialog.cancel();
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -275,6 +292,8 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
         add_product.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 try {
                     AlertDialog.Builder builder = new AlertDialog.Builder(Edit_template.this);
                     View mview = getLayoutInflater().inflate(R.layout.add_prod_temp, null);
@@ -282,12 +301,13 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                     final TextView uom = (TextView) mview.findViewById(R.id.uom1_spinner);
                     final Spinner isnegs = (Spinner) mview.findViewById(R.id.isnega1_spinner);
                     final Spinner iscomputed = (Spinner) mview.findViewById(R.id.spin_computed);
+                    final Spinner isgrab = (Spinner) mview.findViewById(R.id.spin_grab);
                     final EditText price = (EditText) mview.findViewById(R.id.price);
                     final EditText qty = (EditText) mview.findViewById(R.id.qty);
                     final ImageButton favorite1 = (ImageButton) mview.findViewById(R.id.favorite);
                     dh = new DatabaseHelper(Edit_template.this);
 
-                    String sku = dh.getTemp_sku(name.getSelectedItem().toString());
+                    final String sku = dh.getTemp_sku(name.getText().toString());
                     ArrayList<String> list = dh.getProduct(sku, temp_id);
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(Edit_template.this, R.layout.spinner_layout, R.id.txt, list);
                     prod.setAdapter(adapter);
@@ -303,6 +323,16 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                     String[] list3 = iscomputed();
                     ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(Edit_template.this, R.layout.spinner_layout, R.id.txt, list3);
                     iscomputed.setAdapter(adapter3);
+
+                    String[] list4 = isgrab();
+                    ArrayAdapter<String> adapter4 = new ArrayAdapter<String>(Edit_template.this, R.layout.spinner_layout, R.id.txt, list4);
+                    isgrab.setAdapter(adapter4);
+
+
+                    final int temp_id = dh.getTemp_id(name.getText().toString());
+
+
+
 
                     fav1 = 0;
                     if (fav1 == 0) {
@@ -324,13 +354,35 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                             }
                         }
                     });
+
+                    if(sku.equals("S")){
+                        final int prod_id1 = dh.get_prod_id(prod.getSelectedItem().toString());
+                        boolean check_isgrab=dh.check_exist(temp_id,prod_id1);
+                        if(check_isgrab){
+                            isgrab.setSelection(getIndex(isgrab, "Y"));
+                        }else{
+                            isgrab.setSelection(getIndex(isgrab, "N"));
+                        }
+                    }else{
+                        isgrab.setSelection(getIndex(isgrab, "N"));
+                    }
                     prod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                             String uom_name1 = dh.uom_name(dh.get_prod_id(prod.getSelectedItem().toString()));
                             try {
+                                final int prod_id2 = dh.get_prod_id(prod.getSelectedItem().toString());
                                 uom.setText(uom_name1);
-
+                                if(sku.equals("S")){
+                                    boolean check_isgrab=dh.check_exist(temp_id,prod_id2);
+                                    if(check_isgrab){
+                                        isgrab.setSelection(getIndex(isgrab, "Y"));
+                                    }else{
+                                        isgrab.setSelection(getIndex(isgrab, "N"));
+                                    }
+                                }else{
+                                    isgrab.setSelection(getIndex(isgrab, "N"));
+                                }
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -348,11 +400,10 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                         public void onClick(DialogInterface dialog, int which) {
 
                             try {
-
-                                int temp_id = dh.getTemp_id(name.getSelectedItem().toString());
-                                int prod_id = dh.get_prod_id(prod.getSelectedItem().toString());
+                                My_temp_adapter ad=new My_temp_adapter(Edit_template.this,R.layout.my_list_dialog,list1);
 
 
+                                final int prod_id = dh.get_prod_id(prod.getSelectedItem().toString());
                                 if (price.getText().toString().isEmpty()) {
                                     pricee = 0;
                                 } else {
@@ -364,26 +415,28 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                                 } else {
                                     qtyy = Double.parseDouble(qty.getText().toString());
                                 }
-                                Boolean check_prod = dh.check_Name(prod_id, temp_id);
+                                //Boolean check_prod = dh.check_Name(prod_id, temp_id);
                                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 created = format1.format(Calendar.getInstance().getTime());
                                 created_by = dh.getAdmin();
-                                if (check_prod) {
+                                //if (check_prod) {
 
                                     //int lead = dh.getLeadDays(prod_id);
                                     int uom_id = dh.getUom_id(uom.getText().toString());
-                                    dh.insert_transaction_temp11(temp_id, prod_id, uom_id, pricee, isnegs.getSelectedItem().toString(), created, created_by, isactive, qtyy, fav1, iscomputed.getSelectedItem().toString());
+                                    String getGrab=dh.getGrab(temp_id,prod_id);
+                                    dh.insert_transaction_temp11(temp_id, prod_id, uom_id, pricee, isnegs.getSelectedItem().toString(), created, created_by, isactive, qtyy, fav1, iscomputed.getSelectedItem().toString(),isgrab.getSelectedItem().toString());
                                     dh.insert_transaction_temp();
                                     dh.delete_template_line_temp();
                                     Toast.makeText(Edit_template.this, "Successfully added", Toast.LENGTH_LONG).show();
                                     /*Intent in = new Intent(Edit_template.this, Edit_template.class);
                                     in.putExtra("Template",name.getSelectedItem().toString());
                                     startActivity(in);*/
-                                    viewData(temp_id);
+                                    positioning=-1;
+                                    viewData(temp_id,positioning);
                                     dialog.cancel();
-                                } else {
-                                    Toast.makeText(Edit_template.this, "Product already exist in this template", Toast.LENGTH_LONG).show();
-                                }
+                                //} else {
+                                   // Toast.makeText(Edit_template.this, "This product can't be add in this template", Toast.LENGTH_LONG).show();
+                                //}
                             } catch (Exception e) {
                                 e.printStackTrace();
 
@@ -433,7 +486,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                int mytemp_id=dh.getTemp_id(name.getSelectedItem().toString());
+                int mytemp_id=dh.getTemp_id(name.getText().toString());
                 list1=dh.getTemp_content1(newText,mytemp_id);
                 My_temp_adapter adapter1=new My_temp_adapter(Edit_template.this,R.layout.my_list_dialog,list1);
                 mListView1.setAdapter(adapter1);
@@ -449,6 +502,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                     startActivity(in);
                 }else if(identifier==1){
                     Intent in=new Intent(Edit_template.this,Edit_template.class);
+                    in.putExtra("Template",name.getText().toString());
                     startActivity(in);
                 }
 
@@ -457,12 +511,26 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
 
     }
 
-    private void viewData(int temp_id){
+    private void viewData(int temp_id,int position){
 
-        dh=new DatabaseHelper(this);
-        list1=dh.getTemp_content(temp_id);
-        My_temp_adapter adapter1=new My_temp_adapter(this,R.layout.my_list_dialog,list1);
-        mListView1.setAdapter(adapter1);
+        try {
+
+
+            dh = new DatabaseHelper(this);
+            list1 = dh.getTemp_content(temp_id);
+            My_temp_adapter adapter1 = new My_temp_adapter(this, R.layout.my_list_dialog, list1);
+            mListView1.setAdapter(adapter1);
+            int pos=adapter1.getCount()-1;
+            if(position==0){
+                mListView1.setSelection(position);
+            }else if(position<0){
+                mListView1.setSelection(pos);
+            }else if(position>0){
+                mListView1.setSelection(position);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -517,8 +585,9 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                         }while (!content.equals(null));
                         count1--;
                         if(count1==4){
-                            int temp_id=dh.getTemp_id(name.getSelectedItem().toString());
+                            int temp_id=dh.getTemp_id(name.getText().toString());
                             int prod_id=dh.get_prod_id(row[0]);
+                            String isGrab="N";
                             if(prod_id==0){
 
                             }else{
@@ -527,7 +596,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
                                     dh.deleteProd_temp(temp_id,prod_id);
                                 }
                                 int uom_id=dh.getUom_id(row[1]);
-                                dh.insert_transaction_temp1(temp_id,prod_id,uom_id,Double.parseDouble(row[2]),row[3],row[4],created,created_by,isactive);
+                                dh.insert_transaction_temp1(temp_id,prod_id,uom_id,Double.parseDouble(row[2]),row[3],row[4],created,created_by,isactive,isGrab);
                                 count2=1;
                             }
 
@@ -554,7 +623,7 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
 
 
                 Intent in=new Intent(Edit_template.this,Edit_template.class);
-                in.putExtra("Template",name.getSelectedItem().toString());
+                in.putExtra("Template",name.getText().toString());
                 startActivity(in);
 
             }catch (IOException ex){
@@ -597,6 +666,13 @@ public class Edit_template extends AppCompatActivity implements NavigationView.O
         ar[0]="Y";
         ar[1]="N";
         ar[2]="M";
+        return ar;
+    }
+
+    public String[] isgrab(){
+        String[] ar=new String[2];
+        ar[0]="N";
+        ar[1]="Y";
         return ar;
     }
 

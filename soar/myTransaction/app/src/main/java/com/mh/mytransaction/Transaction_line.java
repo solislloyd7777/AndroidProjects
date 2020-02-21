@@ -82,7 +82,6 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
         final int pos = Integer.parseInt(getIntent().getStringExtra("position"));
         dh = new DatabaseHelper(this);
 
-
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         created = format1.format(Calendar.getInstance().getTime());
 
@@ -138,9 +137,9 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                     temp_id1=dh.getTemp_id(temp_list.getSelectedItem().toString());
                     gross_value.setText(String.valueOf(dh.getsubGross(temp_id1)));
                 }
+
                 gross_value.setText(String.valueOf(dh.getsubGross(temp_id1)));
                 viewData(ident,pos);
-
 
             }
 
@@ -181,6 +180,7 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                             TextView uom_name = (TextView) mview.findViewById(R.id.uom_name);
                             final EditText price = (EditText) mview.findViewById(R.id.price);
                             final EditText quantity = (EditText) mview.findViewById(R.id.quantity);
+                            final TextView Isgrab=(TextView) mview.findViewById(R.id.isgrab);
 
 
 
@@ -204,6 +204,13 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
 
                             prod_name.setText(trans_line.getProduct());
                             uom_name.setText(trans_line.getUom());
+                            if(!trans_line.getIsgrab().equals(null)){
+                                Isgrab.setText(trans_line.getIsgrab());
+                            }else{
+                                Isgrab.setText("N");
+                            }
+
+
 
                             //quantity.setText(String.valueOf(trans_line.getQty()));
                             final String iscomputed=trans_line.getIs_computed();
@@ -217,53 +224,116 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                             final int prod_id = dh.get_prod_id(prod_name.getText().toString());
                             final int uom_id = dh.getUom_id(uom_name.getText().toString());
                             final String isnegative = trans_line.getIsnegative();
+                            final String isgrab=trans_line.getIsgrab();
+                            final String prev_price=price.getText().toString();
 
                             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                public void onClick(final DialogInterface dialog, int which) {
 
                                     try {
                                         if(price.getText().toString().equals("")){
                                             pricee=0.0;
-                                        }else{
+                                        }else if(!price.getText().toString().equals(prev_price)){
+
                                             pricee=Double.parseDouble(price.getText().toString());
-                                        }
-                                        if(quantity.getText().toString().equals("")){
-                                            qty2=0.0;
-                                        }else{
-                                            qty2=Double.parseDouble(quantity.getText().toString());
-                                        }
-                                        double subtotal = (pricee * (qty2));
-                                        int pos = myListView2.getFirstVisiblePosition();
-                                        String change="Y";
+                                            final AlertDialog dialog1= new AlertDialog.Builder(Transaction_line.this)
+                                                    .setMessage("You're about to change the price, are you sure you want to continue?")
+                                                    .setPositiveButton("Yes",null)
+                                                    .setNegativeButton("Cancel",null)
+                                                    .show();
+                                            Button positiveButton=dialog1.getButton(AlertDialog.BUTTON_POSITIVE);
+                                            positiveButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+
+                                                    try{
+
+                                                        if(quantity.getText().toString().equals("")){
+                                                            qty2=0.0;
+                                                        }else{
+                                                            qty2=Double.parseDouble(quantity.getText().toString());
+                                                        }
+                                                        double subtotal = (pricee * (qty2));
+                                                        int pos = myListView2.getFirstVisiblePosition();
+                                                        String change="Y";
                                         /*if(!price.getText().toString().equals(String.valueOf(trans_line.getPrice())) || !quantity.getText().toString().equals(String.valueOf(trans_line.getQty()))){
                                             change="Y";
                                         }else{
                                             change="N";
                                         }*/
-                                        if(ident==0){
+                                                        if(ident==0){
 
 
 
-                                            dh.update_delivery_report_line(temp_id, qty2, prod_id,pricee,subtotal,created,getIntent().getStringExtra("emp_name"),change);
-                                            Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
-                                            gross_value.setText(String.valueOf(dh.getsubGross1(temp_id)));
-                                            viewData(ident,position);
+                                                            dh.update_delivery_report_line(temp_id, qty2, prod_id,pricee,subtotal,created,getIntent().getStringExtra("emp_name"),change);
+                                                            Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
+                                                            gross_value.setText(String.valueOf(dh.getsubGross1(temp_id)));
+                                                            viewData(ident,position);
 
+                                                        }else{
+                                                            int prev_transac_id = dh.getTransac_id();
+                                                            final int transac_id = prev_transac_id + 1;
+                                                            double sub=pricee*qty2;
+
+                                                            String subtotal1=String.format("%.2f", sub);
+                                                            dh.update_trans_temp1(transac_id,temp_id, qty2, prod_id,pricee,subtotal1,created,name,change,isgrab);
+                                                            Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
+
+                                                            int temp_id2=dh.getTemp_id(temp_list.getSelectedItem().toString());
+                                                            gross_value.setText(String.valueOf(dh.getsubGross(temp_id2)));
+                                                            viewData(ident,position);
+                                                            dialog.cancel();
+                                                            dialog1.cancel();
+                                                        }
+
+
+                                                    }catch (Exception ex){
+                                                        ex.printStackTrace();
+
+                                                    }
+                                                }
+                                            });
+                                        }else if(price.getText().toString().equals(prev_price)){
+                                            pricee=Double.parseDouble(price.getText().toString());
+                                            if(quantity.getText().toString().equals("")){
+                                                qty2=0.0;
+                                            }else{
+                                                qty2=Double.parseDouble(quantity.getText().toString());
+                                            }
+                                            double subtotal = (pricee * (qty2));
+                                            int pos = myListView2.getFirstVisiblePosition();
+                                            String change="Y";
+                                        /*if(!price.getText().toString().equals(String.valueOf(trans_line.getPrice())) || !quantity.getText().toString().equals(String.valueOf(trans_line.getQty()))){
+                                            change="Y";
                                         }else{
-                                            int prev_transac_id = dh.getTransac_id();
-                                            final int transac_id = prev_transac_id + 1;
-                                            double sub=pricee*qty2;
+                                            change="N";
+                                        }*/
+                                            if(ident==0){
 
-                                            String subtotal1=String.format("%.2f", sub);
-                                            dh.update_trans_temp1(transac_id,temp_id, qty2, prod_id,pricee,subtotal1,created,name,change);
-                                            Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
 
-                                            int temp_id2=dh.getTemp_id(temp_list.getSelectedItem().toString());
-                                            gross_value.setText(String.valueOf(dh.getsubGross(temp_id2)));
-                                            viewData(ident,position);
-                                            dialog.cancel();
+
+                                                dh.update_delivery_report_line(temp_id, qty2, prod_id,pricee,subtotal,created,getIntent().getStringExtra("emp_name"),change);
+                                                Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
+                                                gross_value.setText(String.valueOf(dh.getsubGross1(temp_id)));
+                                                viewData(ident,position);
+
+                                            }else{
+                                                int prev_transac_id = dh.getTransac_id();
+                                                final int transac_id = prev_transac_id + 1;
+                                                double sub=pricee*qty2;
+
+                                                String subtotal1=String.format("%.2f", sub);
+                                                dh.update_trans_temp1(transac_id,temp_id, qty2, prod_id,pricee,subtotal1,created,name,change,isgrab);
+                                                Toast.makeText(Transaction_line.this, "success", Toast.LENGTH_LONG).show();
+
+                                                int temp_id2=dh.getTemp_id(temp_list.getSelectedItem().toString());
+                                                gross_value.setText(String.valueOf(dh.getsubGross(temp_id2)));
+                                                viewData(ident,position);
+                                                dialog.cancel();
+                                            }
                                         }
+
 
 
 
@@ -440,7 +510,7 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                         int count_branch=dh.getCount_branch(branch_id);
                         ref_num=1000000+count_branch;
                         branch_name=branch_name.replace(" ","_");
-                        doc_num.setText(ref_num+"_"+branch_name);
+                        doc_num.setText(ref_num+" "+branch_name);
 
                         mydate1.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -464,21 +534,21 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                                     month1=1;
                                 }
                                 if(month1<10 && dayOfMonth<10){
-                                    String from_date="0"+month1+"/0"+dayOfMonth+"/"+year;
+                                    String from_date="0"+month1+"-0"+dayOfMonth+"-"+year;
                                     mydate1.setText(from_date);
                                     date1="0"+month1+"-0"+dayOfMonth+"-"+year;
                                 }
                                 else if(month1<10 && dayOfMonth>=10){
-                                    String from_date="0"+month1+"/"+dayOfMonth+"/"+year;
+                                    String from_date="0"+month1+"-"+dayOfMonth+"-"+year;
                                     mydate1.setText(from_date);
                                     date1="0"+month1+"-"+dayOfMonth+"-"+year;
                                 }
                                 else if(month1>=10 && dayOfMonth<10){
-                                    String from_date=""+month1+"/0"+dayOfMonth+"/"+year;
+                                    String from_date=""+month1+"-0"+dayOfMonth+"-"+year;
                                     mydate1.setText(from_date);
                                     date1=""+month1+"-0"+dayOfMonth+"-"+year;
                                 }else if(month1>=10 && dayOfMonth>=10){
-                                    String from_date=""+month1+"/"+dayOfMonth+"/"+year;
+                                    String from_date=""+month1+"-"+dayOfMonth+"-"+year;
                                     mydate1.setText(from_date);
                                     date1=""+month1+"-"+dayOfMonth+"-"+year;
                                 }
@@ -506,7 +576,7 @@ public class Transaction_line extends AppCompatActivity  implements NavigationVi
                                     }
 
                                     //filename=temp_list.getSelectedItem().toString()+"_"+doc_num.getText().toString()+"_"+com_fra+"_"+mydate1.getText().toString().replace("/","")+"_"+type_sku;
-                                    filename=branch_name+"_"+com_fra+"_"+mydate1.getText().toString().replace("/","")+"_"+temp_list.getSelectedItem().toString()+"_"+ref_num+"_"+type_sku;
+                                    filename=branch_name+"_"+com_fra+"_"+mydate1.getText().toString().replace("-","")+"_"+temp_list.getSelectedItem().toString()+"_"+ref_num+"_"+type_sku;
                                     if(!mydate1.getText().toString().equals("CHOOSE DATE")){
                                         long diff;
                                         String refer=reference.getText().toString();

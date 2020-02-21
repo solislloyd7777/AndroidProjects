@@ -37,13 +37,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="10dp"
+                android:gravity="center"
                 android:id="@+id/for_search">
                 <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_toEndOf="@+id/spin_temp"
-                    android:layout_weight="1"
                     android:background="@drawable/ic_search"
                     android:id="@+id/search_btn"/>
             </LinearLayout>
@@ -54,12 +53,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:padding="10dp"
                 android:id="@+id/for_back"
+                android:gravity="center"
                 android:visibility="gone">
                 <ImageButton
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/ic_back1"
                     android:id="@+id/back"
                     />

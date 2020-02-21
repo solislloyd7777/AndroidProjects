@@ -343,7 +343,7 @@ public class View_transactions extends AppCompatActivity implements NavigationVi
                 dialog.show();
 
             } else if (id == R.id.nav_transaction) {
-                Intent in=new Intent(View_transactions.this,Delivery_report.class);
+                Intent in=new Intent(View_transactions.this,Emp_template_list.class);
                 in.putExtra("emp_name",getIntent().getStringExtra("emp_name"));
                 startActivity(in);
             } else if (id == R.id.nav_template) {

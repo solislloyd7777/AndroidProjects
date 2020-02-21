@@ -63,6 +63,7 @@
                 android:id="@+id/password"
                 android:gravity="center_vertical"
                 android:inputType="textPassword"
+                android:digits="0123456789qwertzuiopasdfghjklyxcvbnm@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 android:hint="Enter Password"/>
 
         </android.support.design.widget.TextInputLayout>

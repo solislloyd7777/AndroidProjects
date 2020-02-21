@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 public class Trans_line implements Serializable {
     int template_id;
-    String product,uom,isnegative,is_computed,changed;
+    String product,uom,isnegative,is_computed,changed,isgrab;
     double price,price_temp,qty,qty_temp;
     int fav;
 
-    public Trans_line(int template_id, String product, String uom, double price, double qty,String isnegative,String is_computed,double qty_temp,double price_temp,String changed,int fav) {
+    public Trans_line(int template_id, String product, String uom, double price, double qty,String isnegative,String is_computed,double qty_temp,double price_temp,String changed,int fav,String isgrab) {
         this.template_id = template_id;
         this.qty = qty;
         this.product = product;
@@ -20,6 +20,7 @@ public class Trans_line implements Serializable {
         this.price_temp=price_temp;
         this.changed=changed;
         this.fav=fav;
+        this.isgrab=isgrab;
     }
 
 
@@ -117,5 +118,13 @@ public class Trans_line implements Serializable {
 
     public void setFav(int fav) {
         this.fav = fav;
+    }
+
+    public String getIsgrab() {
+        return isgrab;
+    }
+
+    public void setIsgrab(String isgrab) {
+        this.isgrab = isgrab;
     }
 }

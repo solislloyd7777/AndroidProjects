@@ -35,7 +35,10 @@
                 android:id="@+id/ad_password"
                 android:gravity="center_vertical"
                 android:inputType="textPassword"
-                android:hint="Enter Admin Password"/>
+                android:digits="0123456789qwertzuiopasdfghjklyxcvbnm@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                android:hint="Enter Admin Password"
+                />
+
         </android.support.design.widget.TextInputLayout>
 
 

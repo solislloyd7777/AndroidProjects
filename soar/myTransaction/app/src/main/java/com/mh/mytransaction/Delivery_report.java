@@ -47,6 +47,8 @@ public class Delivery_report extends AppCompatActivity implements NavigationView
     LinearLayout for_import,for_back;
     TextView name;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,14 +68,8 @@ public class Delivery_report extends AppCompatActivity implements NavigationView
         for_back.setVisibility(View.GONE);
         name.setVisibility(View.VISIBLE);
         for_import.setVisibility(View.VISIBLE);
-
-
         dh=new DatabaseHelper(this);
-
             viewData();
-
-
-
         import_delivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +99,6 @@ public class Delivery_report extends AppCompatActivity implements NavigationView
                 builder.setView(mview);
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
 
             }
         });
@@ -555,6 +550,10 @@ public class Delivery_report extends AppCompatActivity implements NavigationView
                 String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
                 // Do anything with file
                 //textView.setText(filePath);
+
+
+
+
                 import_file(filePath);
             }
         }catch (Exception e){

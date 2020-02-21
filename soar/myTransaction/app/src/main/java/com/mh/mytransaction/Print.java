@@ -171,6 +171,7 @@ public class Print extends Activity implements Runnable {
                                 BILL = BILL
                                         + "--------------------------------";
 
+
                                 SQLiteDatabase db = dh.getReadableDatabase();
                                 try {
                                     Cursor curs = db.rawQuery("select mh_product_id,c_uom_id,priceentered,quantity_def0 from mh_delivery_report_line where document_num='" + doc_num + "'", null);
@@ -188,9 +189,8 @@ public class Print extends Activity implements Runnable {
                                 }
                             }
 
-
                             BILL = BILL
-                                    + "\n-----------------------------------------------";
+                                    + "\n--------------------------------";
                             BILL = BILL + "\n\n ";
 
                             BILL = BILL+"\n"+"Received by:";
@@ -199,7 +199,7 @@ public class Print extends Activity implements Runnable {
                             BILL = BILL+"\n"+"Date:";
 
                             BILL = BILL
-                                    + "-----------------------------------------------\n";
+                                    + "\n--------------------------------";
                             BILL = BILL + "\n\n ";
                             os.write(BILL.getBytes());
                             //This is printer specific code you can comment ==== > Start
